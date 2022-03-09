@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package android.support.v4.view;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.database.DataSetObserver;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.os.SystemClock;
+import android.support.annotation.CallSuper;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.os.ParcelableCompat;
+import android.support.v4.os.ParcelableCompatCreatorCallbacks;
+import android.support.v4.view.accessibility.AccessibilityEventCompat;
+import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
+import android.support.v4.view.accessibility.AccessibilityRecordCompat;
+import android.support.v4.widget.EdgeEffectCompat;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.FocusFinder;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
+import android.view.VelocityTracker;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.Interpolator;
+import android.widget.Scroller;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Layout manager that allows the user to flip left and right
+ * through pages of data.  You supply an implementation of a
+ * {@link PagerAdapter} to generate the pages that the view shows.
+ *
+ * <p>ViewPager is most often used in conjunction with {@link android.app.Fragment},
+ * which is a convenient way to supply and manage the lifecycle of each page.
+ * There are standard adapters implemented for using fragments with the ViewPager,
+ * which cover the most common use cases.  These are
+ * {@link android.support.v4.app.FragmentPagerAdapter} and
+ * {@link android.support.v4.app.FragmentStatePagerAdapter}; each of these
+ * classes have simple code showing how to build a full user interface
+ * with them.
+ *
+ * <p>Views which are annotated with the {@link DecorView} annotation are treated as
+ * part of the view pagers 'decor'. Each decor view's position can be controlled via
+ * its {@code android:layout_gravity} attribute. For example:
+ *
+ * <pre>
+ * &lt;android.support.v4.view.ViewPager
+ *     android:layout_width=&quot;match_parent&quot;
+ *     android:layout_height=&quot;match_parent&quot;&gt;
+ *
+ *     &lt;android.support.v4.view.PagerTitleStrip
+ *         android:layout_width=&quot;match_parent&quot;
+ *         android:layout_height=&quot;wrap_content&quot;
+ *         android:layout_gravity=&quot;top&quot; /&gt;
+ *
+ * &lt;/android.support.v4.view.ViewPager&gt;
+ * </pre>
